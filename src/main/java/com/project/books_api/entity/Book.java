@@ -1,17 +1,37 @@
 package com.project.books_api.entity;
 
 public class Book {
+    private long id;
     private String title;
     private String author;
     private String category;
+    private int rating
 
     public Book() {
     }
 
-    public Book(String title, String author, String category) {
-        this.author = author;
+    public Book(long id, String title, String author, String category, int rating) {
+        this.id = id;
         this.title = title;
+        this.author = author;
         this.category = category;
+        this.rating = rating;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public void setAuthor(String author) {
