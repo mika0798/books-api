@@ -5,7 +5,7 @@ public class Book {
     private String title;
     private String author;
     private String category;
-    private int rating
+    private int rating;
 
     public Book() {
     }
