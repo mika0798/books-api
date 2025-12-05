@@ -1,14 +1,14 @@
 package com.project.books_api.entity;
 
 public class Book {
-    private String author;
     private String title;
+    private String author;
     private String category;
 
     public Book() {
     }
 
-    public Book(String author, String title, String category) {
+    public Book(String title, String author, String category) {
         this.author = author;
         this.title = title;
         this.category = category;
