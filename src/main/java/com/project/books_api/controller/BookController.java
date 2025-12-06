@@ -1,12 +1,20 @@
 package com.project.books_api.controller;
 
 import com.project.books_api.entity.Book;
+import com.project.books_api.entity.BookRequest;
+import com.project.books_api.exception.BookNotFoundException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Tag(name="Books Rest API Endpoints", description = "Operations related to books")
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -25,6 +33,8 @@ public class BookController {
         ));
     }
 
+    @Operation(summary="Get all books", description = "Retrieve a list of all available books")
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<Book> getBooks(@RequestParam(required = false) String category) {
         List<Book> booksByCategory = new ArrayList<>();
@@ -36,35 +46,52 @@ public class BookController {
                 .toList();
     }
 
+    @Operation(summary="Get a book by Id", description = "Retrieve a book by its Id")
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public Book getBookByTitle(@PathVariable long id) {
+    public Book getBookByTitle(@PathVariable @Min(value = 1) long id) {
+
         return books.stream()
                 .filter(book -> book.getId() == id)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
     }
 
+    @Operation(summary="Create new book", description = "Add a book to a list")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void addBook(@RequestBody Book addBook) {
-        boolean isNewBook = books.stream()
-                .noneMatch(b -> b.getTitle().equalsIgnoreCase(addBook.getTitle()));
-        if (isNewBook) {
-            books.add(addBook);
-        }
+    public void createBook(@Valid @RequestBody BookRequest bookRequest) {
+        long newId = books.isEmpty() ? 1 : (books.getLast().getId() + 1);
+        Book newBook = convertBook(newId, bookRequest);
+        books.add(newBook);
     }
 
+    private Book convertBook(long id, BookRequest bookRequest) {
+        return new Book(
+                id,
+                bookRequest.getTitle(),
+                bookRequest.getAuthor(),
+                bookRequest.getCategory(),
+                bookRequest.getRating()
+        );
+    }
+
+    @Operation(summary="Update a book", description = "Update a details of a book")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void updateBook(@PathVariable long id, @RequestBody Book updateBook) {
+    public void updateBook(@PathVariable @Min(value = 1) long id,@Valid @RequestBody BookRequest updateBook) {
         for (int i = 0; i < books.size(); i++) {
             if (books.get(i).getId() == id) {
-                books.set(i, updateBook);
+                books.set(i, convertBook(id, updateBook));
                 return;
             }
         }
     }
 
+    @Operation(summary="Delete a book", description = "Remove a book from the list")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable long id) {
+    public void deleteBook(@PathVariable @Min(value = 1) long id) {
         books.removeIf(book -> book.getId() == id);
     }
 
