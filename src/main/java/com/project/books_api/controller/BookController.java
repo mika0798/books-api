@@ -3,12 +3,14 @@ package com.project.books_api.controller;
 import com.project.books_api.entity.Book;
 import com.project.books_api.entity.BookRequest;
 import com.project.books_api.exception.BookNotFoundException;
+import com.project.books_api.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +22,11 @@ import java.util.List;
 @RequestMapping("/api/books")
 public class BookController {
     private final List<Book> books = new ArrayList<>();
+    private final BookService bookService;
 
-    public BookController() {
-        init();
-    };
-
-    private void init() {
-        books.addAll(List.of(
-                new Book(1,"Computer Science Pro","Chad Darby","Computer Science",5),
-                new Book(2,"Java Spring Master","Eric Roby","Computer Science",5),
-                new Book(3,"Why 1+1 Rocks","Adil A.","Math",5),
-                new Book(4,"How Bears Hibernate","Bob B.","Science",2),
-                new Book(5,"A Pirate's Treasure","Curt C","History",3),
-                new Book(6,"Why 2+2 Better","Dan D","Math",1),
-                new Book(7,"Microservice with Spring Boot","Chad Darby","Computer Science",5)
-        ));
+    @Autowired
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
     }
 
     @Operation(summary="Get all books", description = "Retrieve a list of all available books")

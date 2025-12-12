@@ -1,69 +1,33 @@
 package com.project.books_api.entity;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+@Entity
+@Table(name="books")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private long id;
+
+    @Column(name="title", nullable = false)
     private String title;
+
+    @Column(name="author")
     private String author;
+
+    @Column(name="category")
     private String category;
+
+    @Column(name="rating")
     private int rating;
 
-    public Book() {
-    }
-
-    public Book(long id, String title, String author, String category, int rating) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.category = category;
-        this.rating = rating;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "author='" + author + '\'' +
-                ", title='" + title + '\'' +
-                ", category='" + category + '\'' +
-                '}';
-    }
 }
