@@ -21,7 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
-    private final List<Book> books = new ArrayList<>();
     private final BookService bookService;
 
     @Autowired
