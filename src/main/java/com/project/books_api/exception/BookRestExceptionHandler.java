@@ -1,6 +1,6 @@
 package com.project.books_api.exception;
 
-import com.project.books_api.entity.BookErrorResponse;
+import com.project.books_api.dto.BookErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

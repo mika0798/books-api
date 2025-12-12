@@ -1,4 +1,4 @@
-package com.project.books_api.entity;
+package com.project.books_api.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
