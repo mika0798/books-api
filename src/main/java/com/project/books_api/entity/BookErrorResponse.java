@@ -1,4 +1,4 @@
-package com.project.books_api.exception;
+package com.project.books_api.entity;
 
 public class BookErrorResponse {
     private int status;
