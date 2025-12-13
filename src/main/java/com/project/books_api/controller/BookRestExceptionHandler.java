@@ -1,6 +1,7 @@
-package com.project.books_api.exception;
+package com.project.books_api.controller;
 
-import com.project.books_api.dto.BookErrorResponse;
+import com.project.books_api.dto.BookErrorResponseDto;
+import com.project.books_api.exception.BookNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class BookRestExceptionHandler {
 
     @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<BookErrorResponse> handleBookNotFoundException(BookNotFoundException e) {
+    public ResponseEntity<BookErrorResponseDto> handleBookNotFoundException(BookNotFoundException e) {
 
-        BookErrorResponse bookErrorResponse = new BookErrorResponse();
+        BookErrorResponseDto bookErrorResponse = new BookErrorResponseDto();
 
         bookErrorResponse.setMessage(e.getMessage());
         bookErrorResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -22,9 +23,9 @@ public class BookRestExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<BookErrorResponse> handleException(Exception e) {
+    public ResponseEntity<BookErrorResponseDto> handleException(Exception e) {
 
-        BookErrorResponse bookErrorResponse = new BookErrorResponse();
+        BookErrorResponseDto bookErrorResponse = new BookErrorResponseDto();
 
         bookErrorResponse.setMessage(e.getMessage());
         bookErrorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
