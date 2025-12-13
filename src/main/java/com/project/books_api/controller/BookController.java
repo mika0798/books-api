@@ -56,6 +56,27 @@ public class BookController {
         return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
+    @Operation(summary="Update a book", description = "Update a details of a book")
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(
+            @Parameter(description = "Id of the book to update")
+            @PathVariable @Min(value = 1) long id,
+            @Valid @RequestBody BookRequestDto bookRequest) {
+
+        Book updateBook = convertBook(id, bookRequest);
+        Book savedBook = bookService.saveBook(updateBook);
+
+        return new ResponseEntity<>(savedBook, HttpStatus.OK);
+    }
+
+    @Operation(summary="Delete a book", description = "Remove a book from the list")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@Parameter(description = "Id of the book to delete")
+                               @PathVariable @Min(value = 1) long id) {
+        bookService.deleteBookById(id);
+        return ResponseEntity.noContent().build();
+    }
+
     private Book convertBook(long id, BookRequestDto bookRequest) {
         Book newBook = new Book();
         if (id > 0) newBook.setId(id);
@@ -65,26 +86,4 @@ public class BookController {
         newBook.setRating(bookRequest.getRating());
         return newBook;
     }
-
-    @Operation(summary="Update a book", description = "Update a details of a book")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}")
-    public Book updateBook(@Parameter(description = "Id of the book to update")
-                               @PathVariable @Min(value = 1) long id,@Valid @RequestBody BookRequestDto bookRequest) {
-
-    }
-//
-//    @Operation(summary="Delete a book", description = "Remove a book from the list")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @DeleteMapping("/{id}")
-//    public void deleteBook(@Parameter(description = "Id of the book to delete")
-//                               @PathVariable @Min(value = 1) long id) {
-//        books.stream()
-//                .filter(book -> book.getId() == id)
-//                .findFirst()
-//                .orElseThrow(() -> new BookNotFoundException("Book not found " + id));
-//
-//        books.removeIf(book -> book.getId() == id);
-//    }
-
 }
