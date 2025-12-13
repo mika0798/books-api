@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookErrorResponse {
+public class BookErrorResponseDto {
     private int status;
     private String message;
     private long timestamp;
