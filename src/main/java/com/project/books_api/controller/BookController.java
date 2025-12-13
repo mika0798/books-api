@@ -1,10 +1,14 @@
 package com.project.books_api.controller;
 
+import com.project.books_api.dto.BookRequestDto;
 import com.project.books_api.entity.Book;
+import com.project.books_api.exception.BookNotFoundException;
 import com.project.books_api.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,51 +40,39 @@ public class BookController {
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
-//    @Operation(summary="Get a book by Id", description = "Retrieve a book by its Id")
-//    @ResponseStatus(HttpStatus.OK)
-//    @GetMapping("/{id}")
-//    public Book getBookByTitle(@Parameter(description = "Id of book to be retrieve")
-//                                @PathVariable @Min(value = 1) long id) {
-//
-//        return books.stream()
-//                .filter(book -> book.getId() == id)
-//                .findFirst()
-//                .orElseThrow(() -> new BookNotFoundException("Book not found"));
-//    }
-//
-//    @Operation(summary="Create new book", description = "Add a book to a list")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping
-//    public void createBook(@Valid @RequestBody BookRequest bookRequest) {
-//        long newId = books.isEmpty() ? 1 : (books.getLast().getId() + 1);
-//        Book newBook = convertBook(newId, bookRequest);
-//        books.add(newBook);
-//    }
-//
-//    private Book convertBook(long id, BookRequest bookRequest) {
-//        return new Book(
-//                id,
-//                bookRequest.getTitle(),
-//                bookRequest.getAuthor(),
-//                bookRequest.getCategory(),
-//                bookRequest.getRating()
-//        );
-//    }
-//
-//    @Operation(summary="Update a book", description = "Update a details of a book")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @PutMapping("/{id}")
-//    public Book updateBook(@Parameter(description = "Id of the book to update")
-//                               @PathVariable @Min(value = 1) long id,@Valid @RequestBody BookRequest bookRequest) {
-//        for (int i = 0; i < books.size(); i++) {
-//            if (books.get(i).getId() == id) {
-//                Book updatedBook = convertBook(id, bookRequest);
-//                books.set(i, updatedBook);
-//                return updatedBook;
-//            }
-//        }
-//        throw new BookNotFoundException("Book not found");
-//    }
+    @Operation(summary="Get a book by Id", description = "Retrieve a book by its Id")
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@Parameter(description = "Id of book to be retrieve")
+                                @PathVariable @Min(value = 1) long id) {
+        return new ResponseEntity<>(bookService.getBookById(id), HttpStatus.OK);
+    }
+
+    @Operation(summary="Create new book", description = "Add a book to a list")
+    @PostMapping
+    public ResponseEntity<Book> createBook(@Valid @RequestBody BookRequestDto bookRequest) {
+        Book newBook = convertBook(0L, bookRequest);
+        Book savedBook = bookService.saveBook(newBook);
+
+        return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
+    }
+
+    private Book convertBook(long id, BookRequestDto bookRequest) {
+        Book newBook = new Book();
+        if (id > 0) newBook.setId(id);
+        newBook.setTitle(bookRequest.getTitle());
+        newBook.setAuthor(bookRequest.getAuthor());
+        newBook.setCategory(bookRequest.getCategory());
+        newBook.setRating(bookRequest.getRating());
+        return newBook;
+    }
+
+    @Operation(summary="Update a book", description = "Update a details of a book")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{id}")
+    public Book updateBook(@Parameter(description = "Id of the book to update")
+                               @PathVariable @Min(value = 1) long id,@Valid @RequestBody BookRequestDto bookRequest) {
+
+    }
 //
 //    @Operation(summary="Delete a book", description = "Remove a book from the list")
 //    @ResponseStatus(HttpStatus.NO_CONTENT)
