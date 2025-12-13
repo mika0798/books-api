@@ -1,5 +1,6 @@
 package com.project.books_api.service;
 
+import com.project.books_api.exception.BookNotFoundException;
 import com.project.books_api.repository.BookRepository;
 import com.project.books_api.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Optional<Book> getBookById(Long bookId) {
-        return repository.findById(bookId);
+    public Book getBookById(Long bookId) {
+        return repository.findById(bookId)
+                .orElseThrow(
+                        () -> new BookNotFoundException("Book with id " + bookId + " not found")
+                );
     }
 
     @Override
@@ -38,20 +42,17 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Optional<Book> updateBook(Long id, Book book) {
-        Optional<Book> optionalBook = repository.findById(id);
-        if (optionalBook.isPresent()) {
-            Book updatedBook = optionalBook.get();
+    public Book updateBook(Long id, Book book) {
+        Book existingBook = repository.findById(id)
+                .orElseThrow(
+                        () -> new BookNotFoundException("Book with id " + id + " not found")
+                );
+        existingBook.setTitle(book.getTitle());
+        existingBook.setAuthor(book.getAuthor());
+        existingBook.setCategory(book.getCategory());
+        existingBook.setRating(book.getRating());
+        return repository.save(existingBook);
 
-            updatedBook.setTitle(book.getTitle());
-            updatedBook.setAuthor(book.getAuthor());
-            updatedBook.setCategory(book.getCategory());
-            updatedBook.setRating(book.getRating());
-
-            return Optional.of(repository.save(updatedBook));
-        }
-
-        return Optional.empty();
     }
 
     @Override
