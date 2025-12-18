@@ -12,18 +12,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name="Books Rest API Endpoints", description = "Operations related to books")
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
     private final BookService bookService;
+    private final JsonMapper jsonMapper;
 
     @Autowired
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, JsonMapper jsonMapper) {
         this.bookService = bookService;
+        this.jsonMapper = jsonMapper;
     }
 
     @Operation(summary="Get all books", description = "Retrieve a list of all available books")
@@ -68,6 +73,19 @@ public class BookController {
         return new ResponseEntity<>(savedBook, HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}")
+    @Operation(summary="Update a book partly",description="Update only some details of a book")
+    public ResponseEntity<Book> updatePartly(@PathVariable @Min(value=1) Long id,
+                                                 @RequestBody Map<String,Object> patchPayload) {
+        if (patchPayload.containsKey("id")) {
+            throw new RuntimeException("Id is not allowed in Request Body");
+        }
+        Book tempEmployee = bookService.getBookById(id);
+        Book patchedEmployee = patchBook(patchPayload,tempEmployee);
+        return new ResponseEntity<>(patchedEmployee,HttpStatus.OK);
+    }
+
+
     @Operation(summary="Delete a book", description = "Remove a book from the list")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@Parameter(description = "Id of the book to delete")
@@ -84,5 +102,13 @@ public class BookController {
         newBook.setCategory(bookRequest.getCategory());
         newBook.setRating(bookRequest.getRating());
         return newBook;
+    }
+
+    private Book patchBook(Map<String,Object> patchPayload, Book book) {
+        ObjectNode patchNode = jsonMapper.convertValue(patchPayload, ObjectNode.class);
+        ObjectNode bookNode = jsonMapper.convertValue(book, ObjectNode.class);
+
+        bookNode.setAll(patchNode);
+        return  jsonMapper.convertValue(bookNode, Book.class);
     }
 }
