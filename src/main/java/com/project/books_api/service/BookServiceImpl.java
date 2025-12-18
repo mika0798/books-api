@@ -42,20 +42,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book updateBook(Long id, Book book) {
-        Book existingBook = repository.findById(id)
-                .orElseThrow(
-                        () -> new BookNotFoundException("Book with id " + id + " not found")
-                );
-        existingBook.setTitle(book.getTitle());
-        existingBook.setAuthor(book.getAuthor());
-        existingBook.setCategory(book.getCategory());
-        existingBook.setRating(book.getRating());
-        return repository.save(existingBook);
-
-    }
-
-    @Override
     public void deleteBookById(Long id) {
         if (repository.findById(id).isEmpty()) {
             throw new BookNotFoundException("Book with id " + id + " not found");

@@ -2,7 +2,6 @@ package com.project.books_api.controller;
 
 import com.project.books_api.dto.BookRequestDto;
 import com.project.books_api.entity.Book;
-import com.project.books_api.exception.BookNotFoundException;
 import com.project.books_api.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
