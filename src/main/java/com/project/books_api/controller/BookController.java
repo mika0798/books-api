@@ -1,7 +1,6 @@
 package com.project.books_api.controller;
 
 import com.project.books_api.dto.ApiResponse;
-import com.project.books_api.dto.BookErrorResponse;
 import com.project.books_api.dto.BookRequest;
 import com.project.books_api.entity.Book;
 import com.project.books_api.service.BookService;
@@ -14,7 +13,6 @@ import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ObjectNode;
