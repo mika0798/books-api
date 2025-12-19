@@ -1,6 +1,6 @@
 package com.project.books_api.controller;
 
-import com.project.books_api.dto.BookRequestDto;
+import com.project.books_api.dto.BookRequest;
 import com.project.books_api.entity.Book;
 import com.project.books_api.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +53,7 @@ public class BookController {
 
     @Operation(summary="Create new book", description = "Add a book to a list")
     @PostMapping
-    public ResponseEntity<Book> createBook(@Valid @RequestBody BookRequestDto bookRequest) {
+    public ResponseEntity<Book> createBook(@Valid @RequestBody BookRequest bookRequest) {
         Book newBook = convertBook(0L, bookRequest);
         Book savedBook = bookService.saveBook(newBook);
 
@@ -65,7 +65,7 @@ public class BookController {
     public ResponseEntity<Book> updateBook(
             @Parameter(description = "Id of the book to update")
             @PathVariable @Min(value = 1) long id,
-            @Valid @RequestBody BookRequestDto bookRequest) {
+            @Valid @RequestBody BookRequest bookRequest) {
 
         Book updateBook = convertBook(id, bookRequest);
         Book savedBook = bookService.saveBook(updateBook);
@@ -94,7 +94,7 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    private Book convertBook(long id, BookRequestDto bookRequest) {
+    private Book convertBook(long id, BookRequest bookRequest) {
         Book newBook = new Book();
         if (id > 0) newBook.setId(id);
         newBook.setTitle(bookRequest.getTitle());
