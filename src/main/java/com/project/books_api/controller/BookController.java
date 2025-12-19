@@ -1,5 +1,6 @@
 package com.project.books_api.controller;
 
+import com.project.books_api.dto.ApiResponse;
 import com.project.books_api.dto.BookRequest;
 import com.project.books_api.entity.Book;
 import com.project.books_api.service.BookService;
@@ -53,36 +54,37 @@ public class BookController {
 
     @Operation(summary="Create new book", description = "Add a book to a list")
     @PostMapping
-    public ResponseEntity<Book> createBook(@Valid @RequestBody BookRequest bookRequest) {
+    public ResponseEntity<ApiResponse<Book>> createBook(@Valid @RequestBody BookRequest bookRequest) {
         Book newBook = convertBook(0L, bookRequest);
         Book savedBook = bookService.saveBook(newBook);
-
-        return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
+        ApiResponse<Book> response = new ApiResponse<>("Success","Book created successfully", savedBook);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Operation(summary="Update a book", description = "Update a details of a book")
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(
+    public ResponseEntity<ApiResponse<Book>> updateBook(
             @Parameter(description = "Id of the book to update")
             @PathVariable @Min(value = 1) long id,
             @Valid @RequestBody BookRequest bookRequest) {
 
         Book updateBook = convertBook(id, bookRequest);
         Book savedBook = bookService.saveBook(updateBook);
-
-        return new ResponseEntity<>(savedBook, HttpStatus.OK);
+        ApiResponse<Book> response = new ApiResponse<>("Success","Book updated successfully", savedBook);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     @Operation(summary="Update a book partly",description="Update only some details of a book")
-    public ResponseEntity<Book> updatePartly(@PathVariable @Min(value=1) Long id,
+    public ResponseEntity<ApiResponse<Book>> updatePartly(@PathVariable @Min(value=1) Long id,
                                                  @RequestBody Map<String,Object> patchPayload) {
         if (patchPayload.containsKey("id")) {
             throw new RuntimeException("Id is not allowed in Request Body");
         }
         Book tempEmployee = bookService.getBookById(id);
         Book patchedEmployee = patchBook(patchPayload,tempEmployee);
-        return new ResponseEntity<>(patchedEmployee,HttpStatus.OK);
+        ApiResponse<Book> response = new ApiResponse<>("Success","Book updated successfully", patchedEmployee);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
 
