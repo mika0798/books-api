@@ -1,9 +1,11 @@
 package com.project.books_api.controller;
 
 import com.project.books_api.dto.ApiResponse;
+import com.project.books_api.dto.BookErrorResponse;
 import com.project.books_api.dto.BookRequest;
 import com.project.books_api.entity.Book;
 import com.project.books_api.service.BookService;
+import com.project.books_api.validator.BookValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +14,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -25,6 +28,7 @@ import java.util.Map;
 public class BookController {
     private final BookService bookService;
     private final JsonMapper jsonMapper;
+    private final BookValidator bookValidator = new BookValidator();
 
     @Autowired
     public BookController(BookService bookService, JsonMapper jsonMapper) {
@@ -102,6 +106,7 @@ public class BookController {
         newBook.setTitle(bookRequest.getTitle());
         newBook.setAuthor(bookRequest.getAuthor());
         newBook.setCategory(bookRequest.getCategory());
+        newBook.setPrice(bookRequest.getPrice());
         newBook.setRating(bookRequest.getRating());
         return newBook;
     }
