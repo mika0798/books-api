@@ -38,7 +38,7 @@ public class BookController {
 
     @Operation(summary="Get all books", description = "Retrieve a list of all available books")
     @GetMapping
-    public ResponseEntity<List<Book>> getBooks(@Parameter(description = "Optional query parameter for book category")
+    public ResponseEntity<ApiResponse<List<Book>>> getBooks(@Parameter(description = "Optional query parameter for book category")
                                    @RequestParam(required = false) String category) {
         List<Book> books;
         if (category == null || category.isBlank()) {
@@ -46,14 +46,19 @@ public class BookController {
         } else {
             books =  bookService.getBooksByCategory(category);
         }
-        return new ResponseEntity<>(books, HttpStatus.OK);
+
+        ApiResponse<List<Book>> response = new ApiResponse<>("Success","Books found", books);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary="Get a book by Id", description = "Retrieve a book by its Id")
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@Parameter(description = "Id of book to be retrieve")
+    public ResponseEntity<ApiResponse<Book>> getBookById(@Parameter(description = "Id of book to be retrieve")
                                 @PathVariable @Min(value = 1) long id) {
-        return new ResponseEntity<>(bookService.getBookById(id), HttpStatus.OK);
+        Book  book = bookService.getBookById(id);
+        ApiResponse<Book> response = new ApiResponse<>("Success","Book found", book);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary="Create new book", description = "Add a book to a list")
