@@ -20,6 +20,9 @@ public class BookRequest {
     @Size(min = 1, max = 30, message = "Category must be between 1 and 30 characters")
     private String category;
 
+    @Min(value = 1, message= "Price must be at least")
+    private double price;
+
     @Min(value = 1, message= "Rating must be larger than 0")
     @Max(value = 5, message= "Rating cannot go pass 5")
     private int rating;
