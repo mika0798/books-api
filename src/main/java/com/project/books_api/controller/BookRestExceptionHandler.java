@@ -39,6 +39,18 @@ public class BookRestExceptionHandler {
         return new ResponseEntity<>(bookErrorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<BookErrorResponse> handleNullPointerException(NullPointerException e) {
+
+        BookErrorResponse bookErrorResponse = new BookErrorResponse();
+
+        bookErrorResponse.setMessage(e.getMessage());
+        bookErrorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        bookErrorResponse.setTimestamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(bookErrorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BookValidationErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exc) {
         Map<String,String> errors = new HashMap<>();
