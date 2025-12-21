@@ -25,13 +25,10 @@ import java.util.Map;
 @RequestMapping("/api/books")
 public class BookController {
     private final BookService bookService;
-    private final JsonMapper jsonMapper;
-
 
     @Autowired
-    public BookController(BookService bookService, JsonMapper jsonMapper) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
-        this.jsonMapper = jsonMapper;
     }
 
     @Operation(summary="Get all books", description = "Retrieve a list of all available books")
@@ -62,7 +59,7 @@ public class BookController {
     @Operation(summary="Create new book", description = "Add a book to a list")
     @PostMapping
     public ResponseEntity<ApiResponse<Book>> createBook(@Valid @RequestBody BookRequest bookRequest) {
-        Book newBook = convertBook(0L, bookRequest);
+        Book newBook = bookService.convertBook(0L, bookRequest);
         Book savedBook = bookService.saveBook(newBook);
         ApiResponse<Book> response = new ApiResponse<>("Success","Book created successfully", savedBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -75,7 +72,7 @@ public class BookController {
             @PathVariable @Min(value = 1) long id,
             @Valid @RequestBody BookRequest bookRequest) {
 
-        Book updateBook = convertBook(id, bookRequest);
+        Book updateBook = bookService.convertBook(id, bookRequest);
         Book savedBook = bookService.saveBook(updateBook);
         ApiResponse<Book> response = new ApiResponse<>("Success","Book updated successfully", savedBook);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -89,7 +86,7 @@ public class BookController {
             throw new RuntimeException("Id is not allowed in Request Body");
         }
         Book tempEmployee = bookService.getBookById(id);
-        Book patchedEmployee = patchBook(patchPayload,tempEmployee);
+        Book patchedEmployee = bookService.patchBook(patchPayload,tempEmployee);
         ApiResponse<Book> response = new ApiResponse<>("Success","Book updated successfully", patchedEmployee);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
