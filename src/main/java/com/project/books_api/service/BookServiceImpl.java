@@ -1,21 +1,26 @@
 package com.project.books_api.service;
 
+import com.project.books_api.dto.BookRequest;
 import com.project.books_api.exception.BookNotFoundException;
 import com.project.books_api.repository.BookRepository;
 import com.project.books_api.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class BookServiceImpl implements BookService {
     private BookRepository repository;
+    private JsonMapper jsonMapper;
 
     @Autowired
-    public void setRepository(BookRepository repository) {
+    public void setRepository(BookRepository repository, JsonMapper jsonMapper) {
         this.repository = repository;
+        this.jsonMapper = jsonMapper;
     }
 
     @Override
@@ -47,6 +52,27 @@ public class BookServiceImpl implements BookService {
             throw new BookNotFoundException("Book with id " + id + " not found");
         }
         repository.deleteById(id);
+    }
+
+    @Override
+    public Book convertBook(long id, BookRequest bookRequest) {
+        Book newBook = new Book();
+        if (id > 0) newBook.setId(id);
+        newBook.setTitle(bookRequest.getTitle());
+        newBook.setAuthor(bookRequest.getAuthor());
+        newBook.setCategory(bookRequest.getCategory());
+        newBook.setPrice(bookRequest.getPrice());
+        newBook.setRating(bookRequest.getRating());
+        return newBook;
+    }
+
+    @Override
+    public Book patchBook(Map<String,Object> patchPayload, Book book) {
+        ObjectNode patchNode = jsonMapper.convertValue(patchPayload, ObjectNode.class);
+        ObjectNode bookNode = jsonMapper.convertValue(book, ObjectNode.class);
+
+        bookNode.setAll(patchNode);
+        return  jsonMapper.convertValue(bookNode, Book.class);
     }
 
 }

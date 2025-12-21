@@ -26,7 +26,7 @@ import java.util.Map;
 public class BookController {
     private final BookService bookService;
     private final JsonMapper jsonMapper;
-    private final BookValidator bookValidator = new BookValidator();
+
 
     @Autowired
     public BookController(BookService bookService, JsonMapper jsonMapper) {
@@ -103,22 +103,4 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    private Book convertBook(long id, BookRequest bookRequest) {
-        Book newBook = new Book();
-        if (id > 0) newBook.setId(id);
-        newBook.setTitle(bookRequest.getTitle());
-        newBook.setAuthor(bookRequest.getAuthor());
-        newBook.setCategory(bookRequest.getCategory());
-        newBook.setPrice(bookRequest.getPrice());
-        newBook.setRating(bookRequest.getRating());
-        return newBook;
-    }
-
-    private Book patchBook(Map<String,Object> patchPayload, Book book) {
-        ObjectNode patchNode = jsonMapper.convertValue(patchPayload, ObjectNode.class);
-        ObjectNode bookNode = jsonMapper.convertValue(book, ObjectNode.class);
-
-        bookNode.setAll(patchNode);
-        return  jsonMapper.convertValue(bookNode, Book.class);
-    }
 }
