@@ -96,6 +96,7 @@ public class BookController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@Parameter(description = "Id of the book to delete")
                                @PathVariable @Min(value = 1) long id) {
+
         bookService.deleteBookById(id);
         return ResponseEntity.noContent().build();
     }
