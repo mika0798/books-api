@@ -2,6 +2,7 @@ package com.project.books_api.controller;
 
 import com.project.books_api.dto.ApiResponse;
 import com.project.books_api.dto.BookRequest;
+import com.project.books_api.dto.PageResponse;
 import com.project.books_api.entity.Book;
 import com.project.books_api.service.BookService;
 import com.project.books_api.validator.BookValidator;
@@ -11,6 +12,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +43,28 @@ public class BookController {
         List<Book> books = bookService.getBooksByCategory(category);
         ApiResponse<List<Book>> response = new ApiResponse<>("Success","Books found", books);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary="Get books with pagination", description = "Retrieve books with filter and pagination")
+    @GetMapping("/pagination")
+    public ResponseEntity<ApiResponse<PageResponse<Book>>> getBooks(
+            @Parameter(description="Optional query parameter for book category")
+            @RequestParam(required=false) String category,
+            @RequestParam(defaultValue="0") int page,
+            @RequestParam(defaultValue="10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> books = bookService.getBooksByCategory(category, pageable);
+        PageResponse<Book> pageReponse = new PageResponse<>(
+                books.getContent(),
+                books.getNumber(),
+                books.getSize(),
+                books.getTotalElements(),
+                books.getTotalPages()
+        );
+
+        ApiResponse<PageResponse<Book>> response = new ApiResponse<>("Success","Books found", pageReponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
