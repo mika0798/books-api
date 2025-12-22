@@ -35,13 +35,8 @@ public class BookController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<Book>>> getBooks(@Parameter(description = "Optional query parameter for book category")
                                    @RequestParam(required = false) String category) {
-        List<Book> books;
-        if (category == null || category.isBlank()) {
-            books = bookService.getAllBooks();
-        } else {
-            books =  bookService.getBooksByCategory(category);
-        }
 
+        List<Book> books = bookService.getBooksByCategory(category);
         ApiResponse<List<Book>> response = new ApiResponse<>("Success","Books found", books);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
