@@ -5,6 +5,8 @@ import com.project.books_api.exception.BookNotFoundException;
 import com.project.books_api.repository.BookRepository;
 import com.project.books_api.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -38,7 +40,18 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getBooksByCategory(String category) {
+        if (category == null || category.isEmpty()) {
+            return repository.findAll();
+        }
         return repository.findByCategoryIgnoreCase(category);
+    }
+
+    @Override
+    public Page<Book> getBooksByCategory(String category, Pageable pageable) {
+        if (category == null || category.isBlank()) {
+            return repository.findAll(pageable);
+        }
+        return repository.findByCategoryIgnoreCase(category, pageable);
     }
 
     @Override
